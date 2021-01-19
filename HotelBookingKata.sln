@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelBookingKata", "HotelBookingKata\HotelBookingKata.csproj", "{62274B98-FCC3-402C-8927-7D2A75A91C3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelBookingKata.Tests", "HotelBookingKata.Tests\HotelBookingKata.Tests.csproj", "{521B5F64-8358-42F8-899F-4279F6FD9D44}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{62274B98-FCC3-402C-8927-7D2A75A91C3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62274B98-FCC3-402C-8927-7D2A75A91C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62274B98-FCC3-402C-8927-7D2A75A91C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62274B98-FCC3-402C-8927-7D2A75A91C3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{521B5F64-8358-42F8-899F-4279F6FD9D44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{521B5F64-8358-42F8-899F-4279F6FD9D44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{521B5F64-8358-42F8-899F-4279F6FD9D44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{521B5F64-8358-42F8-899F-4279F6FD9D44}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5DDBDE48-C1D2-47A8-A4DA-E29B6010DE45}
+	EndGlobalSection
+EndGlobal
