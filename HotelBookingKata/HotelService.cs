@@ -14,7 +14,7 @@ namespace HotelBookingKata
 
         public async Task AddHotelAsync(HotelId hotelId, HotelName hotelName)
         {
-            var hotel = new Hotel();//id: hotelId, name: hotelName
+            var hotel = new Hotel(id: hotelId);//id: hotelId, name: hotelName
 
             await _hotelRepository.AddHotelAsync(hotel);
         }

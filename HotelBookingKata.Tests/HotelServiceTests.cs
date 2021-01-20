@@ -22,6 +22,7 @@ namespace HotelBookingKata.Tests
             Hotel savedHotel = hotelRepository.SavedHotel;
 
             Assert.NotNull(savedHotel);
+            Assert.Equal(hotelId, savedHotel.Id);
         }
     }
 
