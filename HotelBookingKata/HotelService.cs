@@ -5,13 +5,18 @@ namespace HotelBookingKata
 {
     public class HotelService
     {
-        public HotelService()
+        private readonly IHotelRepository _hotelRepository;
+
+        public HotelService(IHotelRepository hotelRepository)
         {
+            _hotelRepository = hotelRepository;
         }
 
         public async Task AddHotelAsync(HotelId hotelId, HotelName hotelName)
         {
-            // does nothing for now
+            var hotel = new Hotel();//id: hotelId, name: hotelName
+
+            await _hotelRepository.AddHotelAsync(hotel);
         }
     }
 }

@@ -11,14 +11,29 @@ namespace HotelBookingKata.Tests
         [Fact]
         public async Task AddHotelAsync_ValidHotelIdAndName_CreatesNewHotel()
         {
-            var hotelService = new HotelService();
+            var hotelRepository = new InMemoryHotelRepository();
+            var hotelService = new HotelService(hotelRepository);
 
             var hotelId = new HotelId("h4ck");
             var hotelName = new HotelName("Hacker's Paradise");
 
             await hotelService.AddHotelAsync(hotelId, hotelName);
 
+            Hotel savedHotel = hotelRepository.SavedHotel;
 
+            Assert.NotNull(savedHotel);
+        }
+    }
+
+    internal class InMemoryHotelRepository : IHotelRepository
+    {
+        public Hotel SavedHotel { get; set; }
+
+        public Task AddHotelAsync(Hotel hotel)
+        {
+            SavedHotel = hotel;
+
+            return Task.CompletedTask;
         }
     }
 }
