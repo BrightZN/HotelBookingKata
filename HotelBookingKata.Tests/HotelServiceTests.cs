@@ -24,6 +24,7 @@ namespace HotelBookingKata.Tests
             Assert.NotNull(savedHotel);
             Assert.Equal(hotelId, savedHotel.Id);
             Assert.Equal(hotelName, savedHotel.Name);
+            Assert.Equal(0, savedHotel.NumberOfRooms);
         }
     }
 

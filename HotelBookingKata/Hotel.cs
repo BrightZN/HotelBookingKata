@@ -12,5 +12,6 @@ namespace HotelBookingKata
 
         public HotelId Id { get; set; }
         public HotelName Name { get; set; }
+        public int NumberOfRooms => 0;
     }
 }
