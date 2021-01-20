@@ -2,6 +2,7 @@
 {
     public enum RoomType
     {
-        Standard
+        Standard,
+        Presidential
     }
 }

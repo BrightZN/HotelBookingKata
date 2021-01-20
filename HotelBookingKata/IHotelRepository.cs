@@ -4,6 +4,7 @@ namespace HotelBookingKata
 {
     public interface IHotelRepository
     {
-        Task AddHotelAsync(Hotel hotel);
+        Task SaveHotelAsync(Hotel hotel);
+        Task<Hotel> GetHotelByIdAsync(HotelId hotelId);
     }
 }

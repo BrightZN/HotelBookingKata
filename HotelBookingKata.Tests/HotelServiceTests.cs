@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -39,11 +40,49 @@ namespace HotelBookingKata.Tests
         public async Task SetRoomAsync_ValidHotelIdAndNewRoomInfo_AddsNewRoom()
         {
             var hotelId = new HotelId("h4ck");
+            var hotelName = new HotelName("Hacker's Paradise");
+
             var roomNumber = new RoomNumber("1");
             var roomType = RoomType.Standard;
 
+            var existingHotel = new Hotel(hotelId, hotelName);
+
+            _hotelRepository.SavedHotel = existingHotel;
+
             await _sut.SetRoomAsync(hotelId, roomNumber, roomType);
 
+            var savedHotel = _hotelRepository.SavedHotel;
+
+            var addedRoom = savedHotel.Rooms.Single();
+
+            Assert.Equal(roomNumber, addedRoom.Number);
+            Assert.Equal(roomType, addedRoom.Type);
+        }
+
+        [Fact]
+        public async Task SetRoomAsync_ValidHotelIdAndUpdatedRoomInfo_UpdatesExistingRoom()
+        {
+            var hotelId = new HotelId("h4ck");
+            var hotelName = new HotelName("Hacker's Paradise");
+
+            var roomNumber = new RoomNumber("1");
+            var originalRoomType = RoomType.Standard;
+
+            var existingRoom = new Room(roomNumber, originalRoomType);
+
+            var existingHotel = new Hotel(hotelId, hotelName, existingRoom);
+
+            _hotelRepository.SavedHotel = existingHotel;
+
+            var newRoomType = RoomType.Presidential;
+
+            await _sut.SetRoomAsync(hotelId, roomNumber, newRoomType);
+
+            var savedHotel = _hotelRepository.SavedHotel;
+
+            var updatedRoom = savedHotel.Rooms.Single();
+
+            Assert.Equal(newRoomType, updatedRoom.Type);
         }
     }
 
@@ -51,11 +90,19 @@ namespace HotelBookingKata.Tests
     {
         public Hotel SavedHotel { get; set; }
 
-        public Task AddHotelAsync(Hotel hotel)
+        public Task SaveHotelAsync(Hotel hotel)
         {
             SavedHotel = hotel;
 
             return Task.CompletedTask;
+        }
+
+        public Task<Hotel> GetHotelByIdAsync(HotelId hotelId)
+        {
+            if (SavedHotel.Id == hotelId)
+                return Task.FromResult(SavedHotel);
+
+            throw new HotelNotFoundException();
         }
     }
 }

@@ -14,14 +14,18 @@ namespace HotelBookingKata
 
         public async Task AddHotelAsync(HotelId hotelId, HotelName hotelName)
         {
-            var hotel = new Hotel(id: hotelId, name: hotelName);//id: hotelId, name: hotelName
+            var hotel = new Hotel(hotelId, hotelName);//id: hotelId, name: hotelName
 
-            await _hotelRepository.AddHotelAsync(hotel);
+            await _hotelRepository.SaveHotelAsync(hotel);
         }
 
         public async Task SetRoomAsync(HotelId hotelId, RoomNumber roomNumber, RoomType roomType)
         {
+            var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
 
+            hotel.SetRoom(roomNumber, roomType);
+
+            await _hotelRepository.SaveHotelAsync(hotel);
         }
     }
 }
