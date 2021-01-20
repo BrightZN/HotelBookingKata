@@ -25,15 +25,21 @@ namespace HotelBookingKata
         public void SetRoom(RoomNumber roomNumber, RoomType roomType)
         {
             if (HasRoom(roomNumber))
-            {
-                var roomToUpdate = _rooms.First(r => r.HasNumber(roomNumber));
-
-                roomToUpdate.Type = roomType;
-            }
+                UpdateExistingRoom(roomNumber, roomType);
             else
-            {
-                _rooms.Add(new Room(roomNumber, roomType));
-            }
+                AddNewRoom(roomNumber, roomType);
+        }
+
+        private void AddNewRoom(RoomNumber roomNumber, RoomType roomType)
+        {
+            _rooms.Add(new Room(roomNumber, roomType));
+        }
+
+        private void UpdateExistingRoom(RoomNumber roomNumber, RoomType roomType)
+        {
+            var roomToUpdate = _rooms.First(r => r.HasNumber(roomNumber));
+
+            roomToUpdate.Type = roomType;
         }
 
         private bool HasRoom(RoomNumber roomNumber)
