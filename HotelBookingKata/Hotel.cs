@@ -32,7 +32,9 @@ namespace HotelBookingKata
 
         private void AddNewRoom(RoomNumber roomNumber, RoomType roomType)
         {
-            _rooms.Add(new Room(roomNumber, roomType));
+            var newRoom = new Room(roomNumber, roomType);
+
+            _rooms.Add(newRoom);
         }
 
         private void UpdateExistingRoom(RoomNumber roomNumber, RoomType roomType)
