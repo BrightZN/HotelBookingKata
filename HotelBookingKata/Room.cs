@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace HotelBookingKata
 {
@@ -12,5 +13,7 @@ namespace HotelBookingKata
 
         public RoomNumber Number { get; set; }
         public RoomType Type { get; set; }
+
+        public bool HasNumber(RoomNumber roomNumber) => Number == roomNumber;
     }
 }

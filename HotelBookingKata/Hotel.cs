@@ -24,9 +24,9 @@ namespace HotelBookingKata
 
         public void SetRoom(RoomNumber roomNumber, RoomType roomType)
         {
-            if(_rooms.Any(r => r.Number == roomNumber))
+            if (_rooms.Any(r => r.HasNumber(roomNumber)))
             {
-                var roomToUpdate = _rooms.First(r => r.Number == roomNumber);
+                var roomToUpdate = _rooms.First(r => r.HasNumber(roomNumber));
 
                 roomToUpdate.Type = roomType;
             }
