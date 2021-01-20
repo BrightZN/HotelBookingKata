@@ -8,23 +8,42 @@ namespace HotelBookingKata.Tests
 {
     public class HotelServiceTests
     {
+        private readonly InMemoryHotelRepository _hotelRepository;
+
+        private readonly HotelService _sut;
+
+        public HotelServiceTests()
+        {
+            _hotelRepository = new InMemoryHotelRepository();
+
+            _sut = new HotelService(_hotelRepository);
+        }
+
         [Fact]
         public async Task AddHotelAsync_ValidHotelIdAndName_CreatesNewHotel()
         {
-            var hotelRepository = new InMemoryHotelRepository();
-            var hotelService = new HotelService(hotelRepository);
-
             var hotelId = new HotelId("h4ck");
             var hotelName = new HotelName("Hacker's Paradise");
 
-            await hotelService.AddHotelAsync(hotelId, hotelName);
+            await _sut.AddHotelAsync(hotelId, hotelName);
 
-            Hotel savedHotel = hotelRepository.SavedHotel;
+            var savedHotel = _hotelRepository.SavedHotel;
 
             Assert.NotNull(savedHotel);
             Assert.Equal(hotelId, savedHotel.Id);
             Assert.Equal(hotelName, savedHotel.Name);
             Assert.Equal(0, savedHotel.NumberOfRooms);
+        }
+
+        [Fact]
+        public async Task SetRoomAsync_ValidHotelIdAndNewRoomInfo_AddsNewRoom()
+        {
+            var hotelId = new HotelId("h4ck");
+            var roomNumber = new RoomNumber("1");
+            var roomType = RoomType.Standard;
+
+            await _sut.SetRoomAsync(hotelId, roomNumber, roomType);
+
         }
     }
 

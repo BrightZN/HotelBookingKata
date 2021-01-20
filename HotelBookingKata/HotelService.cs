@@ -18,5 +18,10 @@ namespace HotelBookingKata
 
             await _hotelRepository.AddHotelAsync(hotel);
         }
+
+        public async Task SetRoomAsync(HotelId hotelId, RoomNumber roomNumber, RoomType roomType)
+        {
+
+        }
     }
 }
