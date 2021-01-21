@@ -97,6 +97,7 @@ namespace HotelBookingKata.Tests
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public Task<Hotel> GetHotelByIdAsync(HotelId hotelId)
         {
             if (SavedHotel.Id == hotelId)
