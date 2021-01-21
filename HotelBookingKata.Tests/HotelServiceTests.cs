@@ -37,7 +37,22 @@ namespace HotelBookingKata.Tests
         }
 
         [Fact]
-        public async Task SetRoomAsync_ValidHotelIdAndNewRoomInfo_AddsNewRoom()
+        public async Task AddHotelAsync_ExistingHotel_ThrowsException()
+        {
+            var hotelId = new HotelId("h4ck");
+            var hotelName = new HotelName("Hacker's Paradise");
+
+            var existingHotel = new Hotel(hotelId, hotelName);
+
+            _hotelRepository.SavedHotel = existingHotel;
+
+            var newHotelName = new HotelName("1337 Street");
+
+            await Assert.ThrowsAsync<HotelAlreadyExistsException>(() => _sut.AddHotelAsync(hotelId, newHotelName));
+        }
+
+        [Fact]
+        public async Task SetRoomAsync_ExistingHotelAndNewRoomInfo_AddsNewRoom()
         {
             var hotelId = new HotelId("h4ck");
             var hotelName = new HotelName("Hacker's Paradise");
@@ -60,7 +75,7 @@ namespace HotelBookingKata.Tests
         }
 
         [Fact]
-        public async Task SetRoomAsync_ValidHotelIdAndUpdatedRoomInfo_UpdatesExistingRoom()
+        public async Task SetRoomAsync_ExistingHotelAndUpdatedRoomInfo_UpdatesExistingRoom()
         {
             var hotelId = new HotelId("h4ck");
             var hotelName = new HotelName("Hacker's Paradise");
@@ -86,6 +101,16 @@ namespace HotelBookingKata.Tests
         }
 
         [Fact]
+        public async Task SetRoomAsync_NoHotel_ThrowsException()
+        {
+            var hotelId = new HotelId("h4ck");
+            var roomNumber = new RoomNumber("1");
+            var roomType = RoomType.Standard;
+
+            await Assert.ThrowsAsync<HotelNotFoundException>(() => _sut.SetRoomAsync(hotelId, roomNumber, roomType));
+        }
+
+        [Fact]
         public async Task FindHotelByIdAsync_ExistingHotelWith2StandardRooms_ReturnsHotelInfo()
         {
             var hotelId = new HotelId("h4ck");
@@ -102,8 +127,8 @@ namespace HotelBookingKata.Tests
 
             Assert.NotNull(hotelInfo);
 
-            Assert.Equal(2, hotelInfo.GetCountFor(roomType: RoomType.Standard));
-            Assert.Equal(0, hotelInfo.GetCountFor(roomType: RoomType.Presidential));
+            Assert.Equal(2, hotelInfo.GetCountFor(RoomType.Standard));
+            Assert.Equal(0, hotelInfo.GetCountFor(RoomType.Presidential));
         }
     }
 
@@ -121,10 +146,15 @@ namespace HotelBookingKata.Tests
         /// <inheritdoc/>
         public Task<Hotel> GetHotelByIdAsync(HotelId hotelId)
         {
-            if (SavedHotel.Id == hotelId)
+            if (SavedHotel != null && SavedHotel.Id == hotelId)
                 return Task.FromResult(SavedHotel);
 
             throw new HotelNotFoundException();
+        }
+
+        public Task<bool> HasHotelWithIdAsync(HotelId hotelId)
+        {
+            return Task.FromResult(SavedHotel != null && SavedHotel.Id == hotelId);
         }
     }
 }

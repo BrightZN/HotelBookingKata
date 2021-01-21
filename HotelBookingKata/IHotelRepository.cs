@@ -5,6 +5,7 @@ namespace HotelBookingKata
     public interface IHotelRepository
     {
         Task SaveHotelAsync(Hotel hotel);
+        Task<bool> HasHotelWithIdAsync(HotelId hotelId);
 
         /// <summary>
         /// Throws a <see cref="HotelNotFoundException"/> when a Hotel is not found for the supplied Id.
