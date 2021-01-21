@@ -6,9 +6,9 @@ namespace HotelBookingKata
 {
     public class HotelInfo
     {
-        private readonly IEnumerable<Room> _rooms;
+        private readonly IEnumerable<RoomTypeConfig> _rooms;
 
-        public HotelInfo(IEnumerable<Room> rooms) => _rooms = rooms;
+        public HotelInfo(IEnumerable<RoomTypeConfig> rooms) => _rooms = rooms;
 
         public int GetCountFor(RoomType roomType) => _rooms.Count(r => r.Type == roomType);
     }

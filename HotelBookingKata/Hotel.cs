@@ -6,47 +6,53 @@ namespace HotelBookingKata
 {
     public class Hotel
     {
-        public Hotel(HotelId id, HotelName name, params Room[] rooms)
+        public Hotel(HotelId id, HotelName name, params RoomTypeConfig[] roomTypeConfigs)
         {
             Id = id;
             Name = name;
 
-            _rooms = rooms.ToList();
+            _roomTypeConfigs = roomTypeConfigs.ToList();
         }
 
         public HotelId Id { get; set; }
         public HotelName Name { get; set; }
-        public int NumberOfRooms => _rooms.Count;
 
-        private readonly List<Room> _rooms = new List<Room>();
+        private readonly List<RoomTypeConfig> _roomTypeConfigs;
 
-        public IEnumerable<Room> Rooms => _rooms;
+        public IEnumerable<RoomTypeConfig> RoomTypeConfigs => _roomTypeConfigs;
 
-        public void SetRoom(RoomNumber roomNumber, RoomType roomType)
+        public void SetRoom(RoomType roomType, int roomCount)
         {
-            if (HasRoom(roomNumber))
-                UpdateExistingRoom(roomNumber, roomType);
+            if (HasConfigFor(roomType))
+            {
+                UpdateRoomTypeConfig(roomType, roomCount);
+            }
             else
-                AddNewRoom(roomNumber, roomType);
+                AddRoomTypeConfig(roomType, roomCount);
         }
 
-        private void AddNewRoom(RoomNumber roomNumber, RoomType roomType)
+        private void AddRoomTypeConfig(RoomType roomType, int roomCount)
         {
-            var newRoom = new Room(roomNumber, roomType);
-
-            _rooms.Add(newRoom);
+            _roomTypeConfigs.Add(new RoomTypeConfig(roomType, roomCount));
         }
 
-        private void UpdateExistingRoom(RoomNumber roomNumber, RoomType roomType)
+        private void UpdateRoomTypeConfig(RoomType roomType, int roomCount)
         {
-            var roomToUpdate = _rooms.First(r => r.HasNumber(roomNumber));
+            var roomTypeConfig = _roomTypeConfigs.First(r => r.HasType(roomType));
 
-            roomToUpdate.Type = roomType;
+            roomTypeConfig.Count = roomCount;
         }
 
-        private bool HasRoom(RoomNumber roomNumber)
+        private bool HasConfigFor(RoomType roomType)
         {
-            return _rooms.Any(r => r.HasNumber(roomNumber));
+            return _roomTypeConfigs.Any(r => r.HasType(roomType));
+        }
+
+        public int RoomCountFor(RoomType roomType)
+        {
+            return _roomTypeConfigs.Where(r => r.HasType(roomType))
+                .Select(r => r.Count)
+                .FirstOrDefault();
         }
     }
 }

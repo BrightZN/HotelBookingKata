@@ -23,20 +23,18 @@ namespace HotelBookingKata
             await _hotelRepository.SaveHotelAsync(hotel);
         }
 
-        public async Task SetRoomAsync(HotelId hotelId, RoomNumber roomNumber, RoomType roomType)
+        public async Task SetRoomAsync(HotelId hotelId, RoomType roomType, int roomCount)
         {
             var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
 
-            hotel.SetRoom(roomNumber, roomType);
+            hotel.SetRoom(roomType, roomCount);
 
             await _hotelRepository.SaveHotelAsync(hotel);
         }
 
-        public async Task<HotelInfo> FindHotelByIdAsync(HotelId hotelId)
+        public async Task<Hotel> FindHotelByIdAsync(HotelId hotelId)
         {
-            var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
-
-            return new HotelInfo(hotel.Rooms);
+            return await _hotelRepository.GetHotelByIdAsync(hotelId);
         }
     }
 }
