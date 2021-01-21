@@ -27,5 +27,12 @@ namespace HotelBookingKata
 
             await _hotelRepository.SaveHotelAsync(hotel);
         }
+
+        public async Task<HotelInfo> FindHotelByIdAsync(HotelId hotelId)
+        {
+            var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
+
+            return new HotelInfo(hotel.Rooms);
+        }
     }
 }

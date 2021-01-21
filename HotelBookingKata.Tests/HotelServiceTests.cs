@@ -84,6 +84,27 @@ namespace HotelBookingKata.Tests
 
             Assert.Equal(newRoomType, updatedRoom.Type);
         }
+
+        [Fact]
+        public async Task FindHotelByIdAsync_ExistingHotelWith2StandardRooms_ReturnsHotelInfo()
+        {
+            var hotelId = new HotelId("h4ck");
+            var hotelName = new HotelName("Hacker's Paradise");
+
+            var room1 = new Room(new RoomNumber("1"), RoomType.Standard);
+            var room2 = new Room(new RoomNumber("2"), RoomType.Standard);
+
+            var hotel = new Hotel(hotelId, hotelName, room1, room2);
+
+            _hotelRepository.SavedHotel = hotel;
+
+            var hotelInfo = await _sut.FindHotelByIdAsync(hotelId);
+
+            Assert.NotNull(hotelInfo);
+
+            Assert.Equal(2, hotelInfo.GetCountFor(roomType: RoomType.Standard));
+            Assert.Equal(0, hotelInfo.GetCountFor(roomType: RoomType.Presidential));
+        }
     }
 
     internal class InMemoryHotelRepository : IHotelRepository
