@@ -8,16 +8,17 @@ namespace HotelBookingKata.Tests
 {
     public class CompanyServicesTests
     {
+        private readonly InMemoryCompanyChecker _companyChecker;
         private readonly InMemoryEmployeeRepository _employeeRepository;
 
         private readonly CompanyService _sut;
 
         public CompanyServicesTests()
         {
-
+            _companyChecker = new InMemoryCompanyChecker();
             _employeeRepository = new InMemoryEmployeeRepository();
 
-            _sut = new CompanyService(_employeeRepository);
+            _sut = new CompanyService(_companyChecker, _employeeRepository);
         }
 
         [Fact]
@@ -25,6 +26,8 @@ namespace HotelBookingKata.Tests
         {
             var companyId = new CompanyId(value: "h4ck");
             var employeeId = new EmployeeId(value: "RE-0001");
+
+            _companyChecker.CompanyId = companyId;
 
             await _sut.AddEmployeeAsync(companyId, employeeId);
 
@@ -34,10 +37,21 @@ namespace HotelBookingKata.Tests
         }
 
         [Fact]
+        public async Task AddEmployee_NonExistentCompany_ThrowsException()
+        {
+            var companyId = new CompanyId(value: "h4ck");
+            var employeeId = new EmployeeId(value: "RE-0001");
+
+            await Assert.ThrowsAsync<CompanyNotFoundException>(() => _sut.AddEmployeeAsync(companyId, employeeId));
+        }
+
+        [Fact]
         public async Task AddEmployeeAsync_ExistingEmployeeId_ThrowsException()
         {
             var companyId = new CompanyId(value: "h4ck");
             var employeeId = new EmployeeId(value: "RE-0001");
+
+            _companyChecker.CompanyId = companyId;
 
             var existingEmployee = new Employee(employeeId, companyId);
 
@@ -62,6 +76,16 @@ namespace HotelBookingKata.Tests
         }
     }
 
+    internal class InMemoryCompanyChecker : ICompanyChecker
+    {
+        public CompanyId CompanyId { get; set;  }
+
+        public Task<bool> DoesNotExistAsync(CompanyId companyId)
+        {
+            return Task.FromResult(CompanyId != companyId);
+        }
+    }
+
     internal class InMemoryEmployeeRepository : IEmployeeRepository
     {
         public Employee SavedEmployee { get; internal set; }
@@ -81,7 +105,6 @@ namespace HotelBookingKata.Tests
 
                 return Task.CompletedTask;
             }
-
 
             throw new EmployeeNotFoundException();
         }
