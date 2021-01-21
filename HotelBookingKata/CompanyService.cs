@@ -16,6 +16,8 @@ namespace HotelBookingKata
 
         public async Task AddEmployeeAsync(CompanyId companyId, EmployeeId employeeId)
         {
+            // could a Company class be treated as an Aggregate?
+
             if (await _companyChecker.DoesNotExistAsync(companyId))
                 throw new CompanyNotFoundException();
 
