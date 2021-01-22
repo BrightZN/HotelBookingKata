@@ -9,14 +9,16 @@ namespace HotelBookingKata.Tests
     public class BookingPolicyServiceTests
     {
         private readonly InMemoryCompanyRepository _companyRepository;
+        private readonly InMemoryEmployeeRepository _employeeRepository;
 
         private readonly BookingPolicyService _sut;
 
         public BookingPolicyServiceTests()
         {
             _companyRepository = new InMemoryCompanyRepository();
+            _employeeRepository = new InMemoryEmployeeRepository();
 
-            _sut = new BookingPolicyService(_companyRepository);
+            _sut = new BookingPolicyService(_companyRepository, _employeeRepository);
         }
 
         [Fact]
@@ -34,6 +36,40 @@ namespace HotelBookingKata.Tests
 
             Assert.True(existingCompany.CanBook(RoomType.Standard));
             Assert.False(existingCompany.CanBook(RoomType.Presidential));
+        }
+
+        [Fact]
+        public async Task SetCompanyPolicyAsync_ExistingCompanyWithPolicy_UpdatesPolicy()
+        {
+            var companyId = new CompanyId("h4ck");
+
+            var companyPolicy = new BookingPolicy(RoomType.Standard);
+
+            var existingCompany = new Company(companyId, companyPolicy);
+
+            _companyRepository.SavedCompany = existingCompany;
+
+            await _sut.SetCompanyPolicyAsync(companyId, new List<RoomType> { RoomType.Standard, RoomType.Presidential });
+
+            Assert.True(existingCompany.CanBook(RoomType.Standard));
+            Assert.True(existingCompany.CanBook(RoomType.Presidential));
+        }
+
+        [Fact]
+        public async Task SetEmployeePolicyAsync_ExistingEmployeeWithoutPolicy_AddsPolicy()
+        {
+            var companyId = new CompanyId("h4ck");
+            var employeeId = new EmployeeId("RE-0182");
+
+            var existingEmployee = new Employee(employeeId, companyId);
+
+            var roomTypes = new List<RoomType> { RoomType.Standard };
+
+            _employeeRepository.SavedEmployee = existingEmployee;
+
+            await _sut.SetEmployeePolicyAsync(employeeId, roomTypes);
+
+            Assert.True(existingEmployee.CanBook(RoomType.Standard));
         }
     }
 
