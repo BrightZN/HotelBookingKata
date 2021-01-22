@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace HotelBookingKata
 {
@@ -9,12 +10,26 @@ namespace HotelBookingKata
             Id = id;
         }
 
+        public Company(CompanyId id, BookingPolicy policy)
+            : this(id)
+        {
+            _policy = policy;
+        }
+
         public CompanyId Id { get; }
-        public bool HasPolicy => true;
+
+        private BookingPolicy _policy;
 
         public bool CanBook(RoomType roomType)
         {
-            return roomType == RoomType.Standard;
+            return NoPolicy() || _policy.AllowsBookingFor(roomType);
+        }
+
+        private bool NoPolicy() => _policy == null;
+
+        public void ChangePolicy(BookingPolicy newPolicy)
+        {
+            _policy = newPolicy;
         }
     }
 }

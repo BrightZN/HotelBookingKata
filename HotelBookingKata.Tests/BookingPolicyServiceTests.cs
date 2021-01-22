@@ -32,15 +32,19 @@ namespace HotelBookingKata.Tests
 
             await _sut.SetCompanyPolicyAsync(companyId, roomTypes);
 
-            //Assert.True(existingCompany.HasPolicy);
-            //Assert.True(existingCompany.CanBook(RoomType.Standard));
-            //Assert.False(existingCompany.CanBook(RoomType.Presidential));
+            Assert.True(existingCompany.CanBook(RoomType.Standard));
+            Assert.False(existingCompany.CanBook(RoomType.Presidential));
         }
     }
 
     internal class InMemoryCompanyRepository : ICompanyRepository
     {
         public object SavedCompany { get; internal set; }
+
+        public Task<Company> GetCompanyByIdAsync(CompanyId companyId)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task SaveCompanyAsync(Company company)
         {
