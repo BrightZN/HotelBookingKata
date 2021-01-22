@@ -4,7 +4,6 @@ namespace HotelBookingKata
 {
     public class Employee
     {
-        private BookingPolicy _policy;
 
         public Employee(EmployeeId id, CompanyId companyId)
         {
@@ -20,6 +19,8 @@ namespace HotelBookingKata
 
         public EmployeeId Id { get; }
         public CompanyId CompanyId { get; }
+
+        private BookingPolicy _policy;
 
         public bool CanBook(RoomType roomType)
         {
