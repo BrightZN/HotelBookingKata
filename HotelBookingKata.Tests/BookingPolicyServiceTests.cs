@@ -26,7 +26,7 @@ namespace HotelBookingKata.Tests
 
             var roomTypes = new List<RoomType> { RoomType.Standard };
 
-            var existingCompany = new Company(id: companyId);
+            var existingCompany = new Company(companyId);
 
             _companyRepository.SavedCompany = existingCompany;
 
@@ -39,11 +39,14 @@ namespace HotelBookingKata.Tests
 
     internal class InMemoryCompanyRepository : ICompanyRepository
     {
-        public object SavedCompany { get; internal set; }
+        public Company SavedCompany { get; internal set; }
 
         public Task<Company> GetCompanyByIdAsync(CompanyId companyId)
         {
-            throw new NotImplementedException();
+            if (SavedCompany != null && SavedCompany.Id == companyId)
+                return Task.FromResult(SavedCompany);
+
+            throw new CompanyNotFoundException();
         }
 
         public Task SaveCompanyAsync(Company company)

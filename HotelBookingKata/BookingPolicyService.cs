@@ -16,7 +16,11 @@ namespace HotelBookingKata
         public async Task SetCompanyPolicyAsync(CompanyId companyId, IEnumerable<RoomType> roomTypes)
         {
             var company = await _companyRepository.GetCompanyByIdAsync(companyId);
-            
+
+            var bookingPolicy = new BookingPolicy(roomTypes);
+
+            company.ChangePolicy(bookingPolicy);
+
             await _companyRepository.SaveCompanyAsync(company);
         }
     }
