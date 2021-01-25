@@ -69,6 +69,7 @@ namespace HotelBookingKata.Tests
 
             await _sut.SetEmployeePolicyAsync(employeeId, roomTypes);
 
+            Assert.False(existingEmployee.NoPolicy());
             Assert.True(existingEmployee.CanBook(RoomType.Standard));
         }
     }

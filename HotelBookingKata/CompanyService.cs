@@ -26,7 +26,7 @@ namespace HotelBookingKata
 
             var employee = new Employee(employeeId, companyId);
 
-            await _employeeRepository.AddEmployeeAsync(employee);
+            await _employeeRepository.SaveEmployeeAsync(employee);
         }
 
         public async Task DeleteEmployeeAsync(EmployeeId employeeId)

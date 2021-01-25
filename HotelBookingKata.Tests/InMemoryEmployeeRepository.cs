@@ -6,7 +6,7 @@ namespace HotelBookingKata.Tests
     {
         public Employee SavedEmployee { get; internal set; }
 
-        public Task AddEmployeeAsync(Employee employee)
+        public Task SaveEmployeeAsync(Employee employee)
         {
             SavedEmployee = employee;
 
@@ -21,6 +21,14 @@ namespace HotelBookingKata.Tests
 
                 return Task.CompletedTask;
             }
+
+            throw new EmployeeNotFoundException();
+        }
+
+        public Task<Employee> GetEmployeeByIdAsync(EmployeeId employeeId)
+        {
+            if (SavedEmployee != null && SavedEmployee.Id == employeeId)
+                return Task.FromResult(SavedEmployee);
 
             throw new EmployeeNotFoundException();
         }

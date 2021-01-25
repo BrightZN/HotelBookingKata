@@ -4,8 +4,9 @@ namespace HotelBookingKata
 {
     public interface IEmployeeRepository
     {
-        Task AddEmployeeAsync(Employee employee);
+        Task SaveEmployeeAsync(Employee employee);
         Task<bool> HasEmployeeWithIdAsync(EmployeeId employeeId);
         Task DeleteEmployeeByIdAsync(EmployeeId employeeId);
+        Task<Employee> GetEmployeeByIdAsync(EmployeeId employeeId);
     }
 }
