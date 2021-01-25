@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -13,6 +14,8 @@ namespace HotelBookingKata.Tests
         private readonly InMemoryEmployeeRepository _employeeRepository;
         private readonly BookingPolicyService _bookingPolicyService;
         private readonly InMemoryBookingScheduleProvider _bookingScheduleProvider;
+        private readonly InMemoryBookingIdGenerator _bookingIdGenerator;
+        private readonly InMemoryBookingRepository _bookingRepository;
 
         private readonly BookingService _sut;
 
@@ -25,8 +28,13 @@ namespace HotelBookingKata.Tests
             _bookingPolicyService = new BookingPolicyService(_companyRepository, _employeeRepository);
 
             _bookingScheduleProvider = new InMemoryBookingScheduleProvider();
+            _bookingIdGenerator = new InMemoryBookingIdGenerator();
 
-            _sut = new BookingService(_hotelRepository, _bookingPolicyService, _bookingScheduleProvider);
+            _sut = new BookingService(
+                _hotelRepository,
+                _bookingPolicyService,
+                _bookingScheduleProvider,
+                _bookingIdGenerator);
         }
 
         [Fact]
@@ -117,7 +125,7 @@ namespace HotelBookingKata.Tests
                 new Booking(new BookingId(value: "BK-00005"), hotelId, employeeId, RoomType.Standard, checkIn, checkOut)
             };
 
-            _bookingScheduleProvider.BookingSchedule = new BookingSchedule(hotelId, bookings);
+            _bookingScheduleProvider.BookingSchedule = new BookingSchedule(hotel, bookings);
 
             _hotelRepository.SavedHotel = hotel;
 
@@ -144,6 +152,8 @@ namespace HotelBookingKata.Tests
 
             var hotel = new Hotel(hotelId, hotelName, new RoomTypeConfig(RoomType.Standard, 5));
 
+
+            _bookingScheduleProvider.BookingSchedule = new BookingSchedule(hotel, Enumerable.Empty<Booking>());
             _hotelRepository.SavedHotel = hotel;
 
             var companyId = new CompanyId("123");
@@ -155,6 +165,8 @@ namespace HotelBookingKata.Tests
             _employeeRepository.SavedEmployee = employee;
 
             var booking = await _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut);
+
+            Assert.NotNull(booking);
         }
     }
 }

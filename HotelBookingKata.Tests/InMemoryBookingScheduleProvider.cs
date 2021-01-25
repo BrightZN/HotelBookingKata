@@ -9,7 +9,7 @@ namespace HotelBookingKata.Tests
 
         public Task<BookingSchedule> GetBookingScheduleAsync(HotelId hotelId, RoomType roomType, DateTime checkIn, DateTime checkOut)
         {
-            if (BookingSchedule != null && BookingSchedule.HotelId == hotelId)
+            if (BookingSchedule != null && BookingSchedule.Hotel.Id == hotelId)
                 return Task.FromResult(BookingSchedule);
 
             throw new HotelNotFoundException();

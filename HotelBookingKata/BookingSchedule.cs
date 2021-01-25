@@ -6,27 +6,24 @@ namespace HotelBookingKata
 {
     public class BookingSchedule
     {
-        public BookingSchedule(HotelId hotelId, IEnumerable<Booking> bookings)
+        public BookingSchedule(Hotel hotel, IEnumerable<Booking> bookings)
         {
-            HotelId = hotelId;
+            Hotel = hotel;
 
             _bookings = bookings;
         }
 
-        public HotelId HotelId { get; set; }
+        public Hotel Hotel { get; }
 
         private readonly IEnumerable<Booking> _bookings;
 
         public bool CannotAccomodateBookingFor(RoomType roomType, DateTime checkIn, DateTime checkOut)
         {
-            foreach(var booking in _bookings.Where(b => b.RoomType == roomType))
-            {
-                if (booking.OverlapsWith(checkIn, checkOut))
-                    return true;
+            int roomCount = Hotel.RoomCountFor(roomType);
 
-            }
+            int occupiedRooms = _bookings.Count(b => b.RoomType == roomType && b.CoincidesWith(checkIn, checkOut));
 
-            return false;
+            return roomCount <= occupiedRooms;
         }
     }
 }

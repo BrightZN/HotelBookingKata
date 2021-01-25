@@ -21,7 +21,22 @@ namespace HotelBookingKata
         public DateTime CheckIn { get; }
         public DateTime CheckOut { get; }
 
-        public bool OverlapsWith(DateTime checkIn, DateTime checkOut)
+        public bool CoincidesWith(DateTime checkIn, DateTime checkOut)
+        {
+            return Matches(checkIn, checkOut)
+                || Wraps(checkIn)
+                || Wraps(checkOut)
+                || CheckIn > checkIn && checkOut > CheckOut
+                || CheckIn == checkIn && checkOut > CheckOut
+                || CheckIn > checkIn && checkOut == CheckOut;
+        }
+
+        private bool Wraps(DateTime time)
+        {
+            return CheckIn < time && time < CheckOut;
+        }
+
+        private bool Matches(DateTime checkIn, DateTime checkOut)
         {
             return CheckIn == checkIn && CheckOut == checkOut;
         }

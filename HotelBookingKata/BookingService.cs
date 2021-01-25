@@ -8,15 +8,18 @@ namespace HotelBookingKata
         private readonly IHotelRepository _hotelRepository;
         private readonly BookingPolicyService _bookingPolicyService;
         private readonly IBookingScheduleProvider _bookingScheduleProvider;
+        private readonly IBookingIdGenerator _bookingIdGenerator;
 
         public BookingService(
-            IHotelRepository hotelRepository, 
-            BookingPolicyService bookingPolicyService, 
-            IBookingScheduleProvider bookingScheduleProvider)
+            IHotelRepository hotelRepository,
+            BookingPolicyService bookingPolicyService,
+            IBookingScheduleProvider bookingScheduleProvider, 
+            IBookingIdGenerator bookingIdGenerator)
         {
             _hotelRepository = hotelRepository;
             _bookingPolicyService = bookingPolicyService;
             _bookingScheduleProvider = bookingScheduleProvider;
+            _bookingIdGenerator = bookingIdGenerator;
         }
 
         public async Task<Booking> BookAsync(EmployeeId employeeId, HotelId hotelId, RoomType roomType, DateTime checkIn, DateTime checkOut)
@@ -37,8 +40,11 @@ namespace HotelBookingKata
             if (bookingSchedule.CannotAccomodateBookingFor(roomType, checkIn, checkOut))
                 throw new BookingRoomTypeNotAvailable();
 
+            var bookingId = await _bookingIdGenerator.GenerateBookingIdAsync();
 
-            return null;
+            var booking = new Booking(bookingId, hotelId, employeeId, roomType, checkIn, checkOut);
+
+            return booking;
         }
 
         private async Task<bool> NoBookingsAllowedFor(EmployeeId employeeId, RoomType roomType)
