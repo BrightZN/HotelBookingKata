@@ -13,23 +13,23 @@ namespace HotelBookingKata
         public Company(CompanyId id, BookingPolicy policy)
             : this(id)
         {
-            _policy = policy;
+            this.policy = policy;
         }
 
         public CompanyId Id { get; }
 
-        private BookingPolicy _policy;
+        protected BookingPolicy policy;
 
         public bool CanBook(RoomType roomType)
         {
-            return NoPolicy() || _policy.AllowsBookingFor(roomType);
+            return NoPolicy() || policy.AllowsBookingFor(roomType);
         }
 
-        private bool NoPolicy() => _policy == null;
+        protected bool NoPolicy() => policy == null;
 
         public void ChangePolicy(BookingPolicy newPolicy)
         {
-            _policy = newPolicy;
+            policy = newPolicy;
         }
     }
 }

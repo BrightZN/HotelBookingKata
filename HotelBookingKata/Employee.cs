@@ -14,19 +14,19 @@ namespace HotelBookingKata
         public Employee(EmployeeId id, CompanyId companyId, BookingPolicy policy) 
             : this(id, companyId)
         {
-            _policy = policy;
+            this.policy = policy;
         }
 
         public EmployeeId Id { get; }
         public CompanyId CompanyId { get; }
 
-        private BookingPolicy _policy;
+        protected BookingPolicy policy;
 
         public bool CanBook(RoomType roomType)
         {
-            return NoPolicy() || _policy.AllowsBookingFor(roomType);
+            return NoPolicy() || policy.AllowsBookingFor(roomType);
         }
 
-        private bool NoPolicy() => _policy == null;
+        protected bool NoPolicy() => policy == null;
     }
 }
