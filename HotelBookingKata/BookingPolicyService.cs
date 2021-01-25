@@ -38,7 +38,7 @@ namespace HotelBookingKata
             var employee = await _employeeRepository.GetEmployeeByIdAsync(employeeId);
             var company = await _companyRepository.GetCompanyByIdAsync(employee.CompanyId);
 
-            return employee.CanBook(roomType) || company.CanBook(roomType);
+            return employee.CanBook(roomType) && company.CanBook(roomType);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace HotelBookingKata.Tests
         private readonly InMemoryCompanyRepository _companyRepository;
         private readonly InMemoryEmployeeRepository _employeeRepository;
         private readonly BookingPolicyService _bookingPolicyService;
+        private readonly InMemoryBookingScheduleProvider _bookingScheduleProvider;
 
         private readonly BookingService _sut;
 
@@ -23,7 +24,9 @@ namespace HotelBookingKata.Tests
 
             _bookingPolicyService = new BookingPolicyService(_companyRepository, _employeeRepository);
 
-            _sut = new BookingService(_hotelRepository, _bookingPolicyService);
+            _bookingScheduleProvider = new InMemoryBookingScheduleProvider();
+
+            _sut = new BookingService(_hotelRepository, _bookingPolicyService, _bookingScheduleProvider);
         }
 
         [Fact]
@@ -77,15 +80,81 @@ namespace HotelBookingKata.Tests
             DateTime checkIn = new DateTime(2021, 1, 25);
             DateTime checkOut = checkIn.AddDays(3);
 
+            var hotel = new Hotel(hotelId, hotelName, new RoomTypeConfig(RoomType.Standard, 5), new RoomTypeConfig(RoomType.Presidential, 1));
+
+            _hotelRepository.SavedHotel = hotel;
+
+            var companyId = new CompanyId("123");
+            var company = new Company(companyId, new BookingPolicy(RoomType.Standard));
+
+            var employee = new Employee(employeeId, companyId);
+
+            _companyRepository.SavedCompany = company;
+            _employeeRepository.SavedEmployee = employee;
+
+            await Assert.ThrowsAsync<BookingPolicyException>(() => _sut.BookAsync(employeeId, hotelId, RoomType.Presidential, checkIn, checkOut));
+        }
+
+        [Fact]
+        public async Task BookAsync_NoRoomsAvailableDuringBookingPeriod_ThrowsException()
+        {
+            var employeeId = new EmployeeId("RE-1234");
+            var hotelId = new HotelId("JBS");
+            var hotelName = new HotelName("JBS Suites");
+
+            DateTime checkIn = new DateTime(2021, 1, 25);
+            DateTime checkOut = checkIn.AddDays(3);
+
+            var hotel = new Hotel(hotelId, hotelName, new RoomTypeConfig(RoomType.Standard, 5));
+
+            // add 5 bookings to the hotel?
+            var bookings = new List<Booking>
+            { 
+                new Booking(new BookingId(value: "BK-00001"), hotelId, employeeId, RoomType.Standard, checkIn, checkOut),
+                new Booking(new BookingId(value: "BK-00002"), hotelId, employeeId, RoomType.Standard, checkIn, checkOut),
+                new Booking(new BookingId(value: "BK-00003"), hotelId, employeeId, RoomType.Standard, checkIn, checkOut),
+                new Booking(new BookingId(value: "BK-00004"), hotelId, employeeId, RoomType.Standard, checkIn, checkOut),
+                new Booking(new BookingId(value: "BK-00005"), hotelId, employeeId, RoomType.Standard, checkIn, checkOut)
+            };
+
+            _bookingScheduleProvider.BookingSchedule = new BookingSchedule(hotelId, bookings);
+
+            _hotelRepository.SavedHotel = hotel;
+
+            var companyId = new CompanyId("123");
+            var company = new Company(companyId, new BookingPolicy(RoomType.Standard));
+
+            var employee = new Employee(employeeId, companyId);
+
+            _companyRepository.SavedCompany = company;
+            _employeeRepository.SavedEmployee = employee;
+
+            await Assert.ThrowsAsync<BookingRoomTypeNotAvailable>(() => _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut));
+        }
+
+        [Fact]
+        public async Task BookAsync_RoomsAvailableForBooking_CreatesAndReturnsBooking()
+        {
+            var employeeId = new EmployeeId("RE-1234");
+            var hotelId = new HotelId("JBS");
+            var hotelName = new HotelName("JBS Suites");
+
+            DateTime checkIn = new DateTime(2021, 1, 25);
+            DateTime checkOut = checkIn.AddDays(3);
+
             var hotel = new Hotel(hotelId, hotelName, new RoomTypeConfig(RoomType.Standard, 5));
 
             _hotelRepository.SavedHotel = hotel;
 
             var companyId = new CompanyId("123");
-
             var company = new Company(companyId, new BookingPolicy(RoomType.Standard));
 
-            await Assert.ThrowsAsync<BookingPolicyException>(() => _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut));
+            var employee = new Employee(employeeId, companyId);
+
+            _companyRepository.SavedCompany = company;
+            _employeeRepository.SavedEmployee = employee;
+
+            var booking = await _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut);
         }
     }
 }
