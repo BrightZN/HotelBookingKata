@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HotelBookingKata
@@ -7,25 +8,22 @@ namespace HotelBookingKata
     {
         private readonly IHotelRepository _hotelRepository;
         private readonly BookingPolicyService _bookingPolicyService;
-        private readonly IBookingScheduleProvider _bookingScheduleProvider;
-        private readonly IBookingIdGenerator _bookingIdGenerator;
+        private readonly IBookingRepository _bookingRepository;
 
         public BookingService(
             IHotelRepository hotelRepository,
             BookingPolicyService bookingPolicyService,
-            IBookingScheduleProvider bookingScheduleProvider, 
-            IBookingIdGenerator bookingIdGenerator)
+            IBookingRepository bookingRepository)
         {
             _hotelRepository = hotelRepository;
             _bookingPolicyService = bookingPolicyService;
-            _bookingScheduleProvider = bookingScheduleProvider;
-            _bookingIdGenerator = bookingIdGenerator;
+            _bookingRepository = bookingRepository;
         }
 
         public async Task<Booking> BookAsync(EmployeeId employeeId, HotelId hotelId, RoomType roomType, DateTime checkIn, DateTime checkOut)
         {
-            if (checkOut < checkIn.AddDays(1))
-                throw new BookingCheckInDateException();
+            if (CheckOutIsTooEarly(checkIn, checkOut))
+                throw new BookingCheckOutDateException();
 
             var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
 
@@ -35,15 +33,30 @@ namespace HotelBookingKata
             if (await NoBookingsAllowedFor(employeeId, roomType))
                 throw new BookingPolicyException();
 
-            var bookingSchedule = await _bookingScheduleProvider.GetBookingScheduleAsync(hotelId, roomType, checkIn, checkOut);
+            var bookings = await _bookingRepository.GetBookingsAsync(hotelId, roomType, checkIn, checkOut);
+
+            var bookingSchedule = new BookingSchedule(hotel, bookings);
 
             if (bookingSchedule.CannotAccomodateBookingFor(roomType, checkIn, checkOut))
                 throw new BookingRoomTypeNotAvailable();
 
-            var bookingId = await _bookingIdGenerator.GenerateBookingIdAsync();
+            var booking = CreateBooking(employeeId, hotelId, roomType, checkIn, checkOut);
+
+            await _bookingRepository.SaveBookingAsync(booking);
+
+            return booking;
+        }
+
+        private static bool CheckOutIsTooEarly(DateTime checkIn, DateTime checkOut)
+        {
+            return checkOut < checkIn.AddDays(1);
+        }
+
+        private static Booking CreateBooking(EmployeeId employeeId, HotelId hotelId, RoomType roomType, DateTime checkIn, DateTime checkOut)
+        {
+            var bookingId = new BookingId(Guid.NewGuid());
 
             var booking = new Booking(bookingId, hotelId, employeeId, roomType, checkIn, checkOut);
-
             return booking;
         }
 

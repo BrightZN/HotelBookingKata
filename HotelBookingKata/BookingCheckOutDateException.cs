@@ -2,7 +2,7 @@
 
 namespace HotelBookingKata
 {
-    public class BookingCheckInDateException : Exception
+    public class BookingCheckOutDateException : Exception
     {
     }
 }

@@ -13,8 +13,6 @@ namespace HotelBookingKata.Tests
         private readonly InMemoryCompanyRepository _companyRepository;
         private readonly InMemoryEmployeeRepository _employeeRepository;
         private readonly BookingPolicyService _bookingPolicyService;
-        private readonly InMemoryBookingScheduleProvider _bookingScheduleProvider;
-        private readonly InMemoryBookingIdGenerator _bookingIdGenerator;
         private readonly InMemoryBookingRepository _bookingRepository;
 
         private readonly BookingService _sut;
@@ -27,14 +25,13 @@ namespace HotelBookingKata.Tests
 
             _bookingPolicyService = new BookingPolicyService(_companyRepository, _employeeRepository);
 
-            _bookingScheduleProvider = new InMemoryBookingScheduleProvider();
-            _bookingIdGenerator = new InMemoryBookingIdGenerator();
+
+            _bookingRepository = new InMemoryBookingRepository();
 
             _sut = new BookingService(
                 _hotelRepository,
                 _bookingPolicyService,
-                _bookingScheduleProvider,
-                _bookingIdGenerator);
+                _bookingRepository);
         }
 
         [Fact]
@@ -46,7 +43,7 @@ namespace HotelBookingKata.Tests
             DateTime checkIn = new DateTime(2021, 1, 25);
             DateTime checkOut = checkIn;
 
-            await Assert.ThrowsAsync<BookingCheckInDateException>(() => _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut));
+            await Assert.ThrowsAsync<BookingCheckOutDateException>(() => _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut));
         }
 
         [Fact]
@@ -58,7 +55,7 @@ namespace HotelBookingKata.Tests
             DateTime checkIn = new DateTime(2021, 1, 25);
             DateTime checkOut = checkIn.AddHours(8);
 
-            await Assert.ThrowsAsync<BookingCheckInDateException>(() => _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut));
+            await Assert.ThrowsAsync<BookingCheckOutDateException>(() => _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut));
         }
 
         [Fact]
@@ -125,7 +122,7 @@ namespace HotelBookingKata.Tests
                 new Booking(new BookingId(value: "BK-00005"), hotelId, employeeId, RoomType.Standard, checkIn, checkOut)
             };
 
-            _bookingScheduleProvider.BookingSchedule = new BookingSchedule(hotel, bookings);
+            _bookingRepository.Bookings = bookings;
 
             _hotelRepository.SavedHotel = hotel;
 
@@ -152,8 +149,7 @@ namespace HotelBookingKata.Tests
 
             var hotel = new Hotel(hotelId, hotelName, new RoomTypeConfig(RoomType.Standard, 5));
 
-
-            _bookingScheduleProvider.BookingSchedule = new BookingSchedule(hotel, Enumerable.Empty<Booking>());
+            _bookingRepository.Bookings = new List<Booking>();
             _hotelRepository.SavedHotel = hotel;
 
             var companyId = new CompanyId("123");
@@ -167,6 +163,7 @@ namespace HotelBookingKata.Tests
             var booking = await _sut.BookAsync(employeeId, hotelId, RoomType.Standard, checkIn, checkOut);
 
             Assert.NotNull(booking);
+            Assert.NotNull(_bookingRepository.SavedBooking);
         }
     }
 }
