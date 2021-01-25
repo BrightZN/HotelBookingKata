@@ -25,18 +25,23 @@ namespace HotelBookingKata
         {
             if (HasConfigFor(roomType))
             {
-                UpdateRoomTypeConfig(roomType, roomCount);
+                UpdateConfig(roomType, roomCount);
             }
             else
-                AddRoomTypeConfig(roomType, roomCount);
+                AddConfig(roomType, roomCount);
         }
 
-        private void AddRoomTypeConfig(RoomType roomType, int roomCount)
+        public bool DoesNotOffer(RoomType roomType)
+        {
+            return RoomCountFor(roomType) == 0;
+        }
+
+        private void AddConfig(RoomType roomType, int roomCount)
         {
             _roomTypeConfigs.Add(new RoomTypeConfig(roomType, roomCount));
         }
 
-        private void UpdateRoomTypeConfig(RoomType roomType, int roomCount)
+        private void UpdateConfig(RoomType roomType, int roomCount)
         {
             var roomTypeConfig = _roomTypeConfigs.First(r => r.HasType(roomType));
 

@@ -72,6 +72,63 @@ namespace HotelBookingKata.Tests
             Assert.False(existingEmployee.NoPolicy());
             Assert.True(existingEmployee.CanBook(RoomType.Standard));
         }
+
+        [Fact]
+        public async Task IsBookingAllowedAsync_RoomTypeCoveredByCompanyPolicyAndEmployeeWithoutPolicy_ReturnsTrue()
+        {
+            var companyId = new CompanyId("h4ck");
+            var employeeId = new EmployeeId("RE-0182");
+
+            var policy = new BookingPolicy(RoomType.Standard);
+
+            var company = new Company(companyId, policy);
+            var employee = new Employee(employeeId, companyId);
+
+            _companyRepository.SavedCompany = company;
+            _employeeRepository.SavedEmployee = employee;
+
+            bool isBookingAllowed = await _sut.IsBookingAllowedAsync(employeeId, RoomType.Standard);
+
+            Assert.True(isBookingAllowed);
+        }
+
+        [Fact]
+        public async Task IsBookingAllowedAsync_RoomTypeNotCoveredByCompanyAndEmployeePolicy_ReturnsFalse()
+        {
+            var companyId = new CompanyId("h4ck");
+            var employeeId = new EmployeeId("RE-0182");
+
+            var policy = new BookingPolicy(RoomType.Standard);
+
+            var employee = new Employee(employeeId, companyId, policy);
+            var company = new Company(companyId, policy);
+
+            _companyRepository.SavedCompany = company;
+            _employeeRepository.SavedEmployee = employee;
+
+            bool isBookingAllowed = await _sut.IsBookingAllowedAsync(employeeId, RoomType.Presidential);
+
+            Assert.False(isBookingAllowed);
+        }
+
+        [Fact]
+        public async Task IsBookingAllowed_RoomCoveredByEmployeePolicyAndNoCompanyPolicy_ReturnsTrue()
+        {
+            var companyId = new CompanyId("h4ck");
+            var employeeId = new EmployeeId("RE-0182");
+
+            var policy = new BookingPolicy(RoomType.Presidential);
+
+            var employee = new Employee(employeeId, companyId, policy);
+            var company = new Company(companyId);
+
+            _companyRepository.SavedCompany = company;
+            _employeeRepository.SavedEmployee = employee;
+
+            bool isBookingAllowed = await _sut.IsBookingAllowedAsync(employeeId, RoomType.Presidential);
+
+            Assert.True(isBookingAllowed);
+        }
     }
 
     internal class InMemoryCompanyRepository : ICompanyRepository
