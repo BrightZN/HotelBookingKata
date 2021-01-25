@@ -1,4 +1,6 @@
-﻿namespace HotelBookingKata
+﻿using System.Collections.Generic;
+
+namespace HotelBookingKata
 {
     public abstract class BookingAgent
     {
@@ -18,6 +20,11 @@
         public void ChangePolicy(BookingPolicy newPolicy)
         {
             policy = newPolicy;
+        }
+
+        public void ChangePolicy(IEnumerable<RoomType> roomTypes)
+        {
+            ChangePolicy(new BookingPolicy(roomTypes));
         }
 
         public bool NoPolicy() => policy == null;
