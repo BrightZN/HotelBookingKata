@@ -1,7 +1,7 @@
 ﻿namespace HotelBookingKata
 {
-    public interface IHotelMapper<out TResult>
+    public interface IHotelMapper<out THotelInfo>
     {
-        TResult Map(Hotel hotel);
+        THotelInfo Map(Hotel hotel);
     }
 }
