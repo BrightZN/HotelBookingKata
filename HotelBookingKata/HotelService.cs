@@ -31,7 +31,9 @@ namespace HotelBookingKata
             await _hotelRepository.SaveHotelAsync(hotel);
         }
 
-        public async Task<THotelInfo> FindHotelByIdAsync<THotelInfo>(HotelId hotelId, IHotelMapper<THotelInfo> hotelMapper)
+        public async Task<THotelInfo> FindHotelByIdAsync<THotelInfo>(
+            HotelId hotelId, 
+            IHotelMapper<THotelInfo> hotelMapper)
         {
             var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
 
