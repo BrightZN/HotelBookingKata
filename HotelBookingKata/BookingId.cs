@@ -11,7 +11,7 @@ namespace HotelBookingKata
 
         public BookingId(string value)
         {
-            this.Value = value;
+            Value = value;
         }
 
         public string Value { get; }

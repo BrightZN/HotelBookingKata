@@ -164,6 +164,13 @@ namespace HotelBookingKata.Tests
 
             Assert.NotNull(booking);
             Assert.NotNull(_bookingRepository.SavedBooking);
+            
+            Assert.NotNull(booking.BookingId);
+            Assert.Equal(checkIn, booking.CheckIn);
+            Assert.Equal(checkOut, booking.CheckOut);
+            Assert.Equal(employeeId, booking.EmployeeId);
+            Assert.Equal(hotelId, booking.HotelId);
+            Assert.Equal(RoomType.Standard, booking.RoomType);
         }
     }
 }

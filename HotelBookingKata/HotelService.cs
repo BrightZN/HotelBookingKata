@@ -14,7 +14,6 @@ namespace HotelBookingKata
 
         public async Task AddHotelAsync(HotelId hotelId, HotelName hotelName)
         {
-
             if (await _hotelRepository.HasHotelWithIdAsync(hotelId))
                 throw new HotelAlreadyExistsException();
 
@@ -32,9 +31,11 @@ namespace HotelBookingKata
             await _hotelRepository.SaveHotelAsync(hotel);
         }
 
-        public async Task<Hotel> FindHotelByIdAsync(HotelId hotelId)
+        public async Task<TResult> FindHotelByIdAsync<TResult>(HotelId hotelId, IHotelMapper<TResult> hotelMapper)
         {
-            return await _hotelRepository.GetHotelByIdAsync(hotelId);
+            var hotel = await _hotelRepository.GetHotelByIdAsync(hotelId);
+
+            return hotelMapper.Map(hotel);
         }
     }
 }

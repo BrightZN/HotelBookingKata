@@ -100,7 +100,7 @@ namespace HotelBookingKata.Tests
         }
 
         [Fact]
-        public async Task FindHotelByIdAsync_ExistingHotelWith2StandardRooms_ReturnsHotelInfo()
+        public async Task FindHotelByIdAsync_ExistingHotel_ReturnsHotelInfo()
         {
             var hotelId = new HotelId("h4ck");
             var hotelName = new HotelName("Hacker's Paradise");
@@ -112,10 +112,22 @@ namespace HotelBookingKata.Tests
 
             _hotelRepository.SavedHotel = hotel;
 
-            var hotelInfo = await _sut.FindHotelByIdAsync(hotelId);
+            // going to introduce a HotelMapper
+            var hotelMapper = new TestHotelInfoMapper();
+            
+            var hotelInfo = await _sut.FindHotelByIdAsync(hotelId, hotelMapper);
 
+            Assert.NotNull(hotelInfo);
+            
+            Assert.Equal(hotelId, hotel.Id);
+            Assert.Equal(hotelName, hotel.Name);
             Assert.Equal(5, hotelInfo.RoomCountFor(RoomType.Standard));
             Assert.Equal(3, hotelInfo.RoomCountFor(RoomType.Presidential));
         }
+    }
+
+    public class TestHotelInfoMapper : IHotelMapper<Hotel>
+    {
+        public Hotel Map(Hotel hotel) => hotel;
     }
 }

@@ -16,7 +16,7 @@ namespace HotelBookingKata
             _roomTypes = roomTypes;
         }
 
-        public readonly IEnumerable<RoomType> _roomTypes;
+        private readonly IEnumerable<RoomType> _roomTypes;
 
         public bool AllowsBookingFor(RoomType roomType)
         {

@@ -56,8 +56,7 @@ namespace HotelBookingKata
         {
             var bookingId = new BookingId(Guid.NewGuid());
 
-            var booking = new Booking(bookingId, hotelId, employeeId, roomType, checkIn, checkOut);
-            return booking;
+            return new Booking(bookingId, hotelId, employeeId, roomType, checkIn, checkOut);
         }
 
         private async Task<bool> NoBookingsAllowedFor(EmployeeId employeeId, RoomType roomType)

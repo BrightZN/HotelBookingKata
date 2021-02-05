@@ -14,12 +14,10 @@ namespace HotelBookingKata
             _roomTypeConfigs = roomTypeConfigs.ToList();
         }
 
-        public HotelId Id { get; set; }
-        public HotelName Name { get; set; }
+        public HotelId Id { get; }
+        public HotelName Name { get; }
 
         private readonly List<RoomTypeConfig> _roomTypeConfigs;
-
-        public IEnumerable<RoomTypeConfig> RoomTypeConfigs => _roomTypeConfigs;
 
         public void SetRoom(RoomType roomType, int roomCount)
         {
